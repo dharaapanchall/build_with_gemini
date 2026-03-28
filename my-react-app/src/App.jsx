@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import './App.css'
+import { useLiveCoach } from './useLiveCoach'
+import LiveCoachChat from './LiveCoachChat'
 
 async function uploadVideoToGemini(file, apiKey, onProgress) {
   onProgress(`Uploading video (${(file.size / 1024 / 1024).toFixed(1)} MB)...`)
@@ -31,7 +33,6 @@ async function uploadVideoToGemini(file, apiKey, onProgress) {
   const data = await res.json()
   const uploadedFile = data.file
 
-  // Wait for Gemini to finish processing the video
   onProgress('Processing video...')
   for (let i = 0; i < 30; i++) {
     const checkRes = await fetch(
@@ -59,30 +60,24 @@ async function analyzeVideoWithGemini(fileUri, mimeType, apiKey, onProgress) {
           {
             parts: [
               {
-                text: `You are an expert professional tennis coach with decades of experience. Carefully watch this tennis video and provide a detailed, structured coaching analysis.
-
-Please analyze and give specific, actionable tips covering:
-
-**1. Stance & Footwork**
-- Foot positioning and balance
-- Movement patterns and court positioning
-
-**2. Grip & Racket Preparation**
-- Grip type and correctness
-- Early racket preparation and backswing
-
-**3. Swing Mechanics**
-- Contact point
-- Swing path and wrist action
-
-**4. Follow-Through & Body Rotation**
-- Hip and shoulder rotation
-- Follow-through completion
-
-**5. Key Improvements**
-- Top 3 most impactful changes the player should make immediately
-
-Be specific about what you observe in the video. If the video shows a particular shot (serve, forehand, backhand, etc.), tailor your feedback accordingly.`,
+                text: `You are a professional tennis coach and sports injury prevention specialist.
+Analyze this tennis swing video and return a JSON object with exactly this structure:
+{
+  "mistakes": [
+    {
+      "body_part": "wrist/elbow/shoulder/knee/hip/etc",
+      "issue": "short description of the problem",
+      "detail": "2-3 sentence coaching explanation: what the player should do instead, what it should feel like, and a specific drill or cue to fix it",
+      "injury_risk": "what injury this causes",
+      "severity": "low/medium/high",
+      "timestamp_seconds": 3.5
+    }
+  ],
+  "veo_prompt": "A professional tennis player demonstrating perfect technique correcting the issues seen, slow motion, sports biomechanics style",
+  "imagen_prompt": "Close-up of the key body part showing correct position, biomechanics diagram style"
+}
+For timestamp_seconds, identify the exact second in the video where this mistake is most clearly visible.
+Return only valid JSON with no markdown, no code fences, no extra text.`,
               },
               {
                 file_data: { mime_type: mimeType, file_uri: fileUri },
@@ -100,38 +95,16 @@ Be specific about what you observe in the video. If the video shows a particular
   }
 
   const data = await res.json()
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text
   if (!text) throw new Error('No analysis returned from Gemini')
-  return text
+
+  // Strip markdown code fences if Gemini adds them anyway
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim()
+
+  return JSON.parse(text)
 }
 
-function formatTips(text) {
-  return text.split('\n').map((line, i) => {
-    if (!line.trim()) return <br key={i} />
-
-    const boldLine = line.replace(/\*\*(.*?)\*\*/g, (_, m) => `<strong>${m}</strong>`)
-    const cleanLine = boldLine.replace(/^\*+\s*/, '').replace(/^#+\s*/, '')
-
-    if (line.startsWith('**') && line.endsWith('**')) {
-      return (
-        <h3 key={i} className="tip-heading" dangerouslySetInnerHTML={{ __html: cleanLine }} />
-      )
-    }
-    if (line.match(/^\*\*\d+\./)) {
-      return (
-        <h3 key={i} className="tip-heading" dangerouslySetInnerHTML={{ __html: cleanLine }} />
-      )
-    }
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      return (
-        <li key={i} className="tip-item" dangerouslySetInnerHTML={{ __html: cleanLine }} />
-      )
-    }
-    return (
-      <p key={i} className="tip-line" dangerouslySetInnerHTML={{ __html: boldLine }} />
-    )
-  })
-}
+const SEVERITY_LABEL = { high: 'High Risk', medium: 'Medium Risk', low: 'Low Risk' }
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
@@ -139,9 +112,12 @@ export default function App() {
   const [videoFile, setVideoFile] = useState(null)
   const [videoUrl, setVideoUrl] = useState(null)
   const [status, setStatus] = useState('')
-  const [tips, setTips] = useState('')
+  const [analysis, setAnalysis] = useState(null) // { mistakes, veo_prompt, imagen_prompt }
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef(null)
+  const videoRef = useRef(null)
+
+  const liveCoach = useLiveCoach(GEMINI_API_KEY)
 
   const handleVideoChange = (e) => {
     const file = e.target.files[0]
@@ -149,8 +125,9 @@ export default function App() {
     if (videoUrl) URL.revokeObjectURL(videoUrl)
     setVideoFile(file)
     setVideoUrl(URL.createObjectURL(file))
-    setTips('')
+    setAnalysis(null)
     setStatus('')
+    liveCoach.reset()
   }
 
   const handleAnalyze = async () => {
@@ -164,7 +141,7 @@ export default function App() {
     }
 
     setLoading(true)
-    setTips('')
+    setAnalysis(null)
     setStatus('')
 
     try {
@@ -175,7 +152,7 @@ export default function App() {
         GEMINI_API_KEY,
         setStatus
       )
-      setTips(result)
+      setAnalysis(result)
       setStatus('')
     } catch (err) {
       setStatus(`error:${err.message}`)
@@ -192,7 +169,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-icon">🎾</div>
         <h1>Tennis Form Analyzer</h1>
-        <p className="subtitle">Upload a video and get AI-powered coaching tips from Gemini</p>
+        <p className="subtitle">Upload a video and get AI-powered coaching from Gemini</p>
       </header>
 
       <div className="card upload-card">
@@ -216,7 +193,7 @@ export default function App() {
 
       {videoUrl && (
         <div className="card video-card">
-          <video className="video-player" src={videoUrl} controls playsInline />
+          <video ref={videoRef} className="video-player" src={videoUrl} controls playsInline />
         </div>
       )}
 
@@ -241,11 +218,45 @@ export default function App() {
         </div>
       )}
 
-      {tips && (
+      {analysis && (
         <div className="card tips-card">
-          <h2 className="tips-title">Coaching Analysis</h2>
-          <div className="tips-body">{formatTips(tips)}</div>
+          <h2 className="tips-title">Form Analysis</h2>
+
+          <div className="mistakes-list">
+            {analysis.mistakes.map((m, i) => (
+              <div key={i} className={`mistake-card severity-${m.severity}`}>
+                <div className="mistake-header">
+                  <span className="mistake-body-part">{m.body_part}</span>
+                  <div className="mistake-header-right">
+                    {m.timestamp_seconds != null && (
+                      <button
+                        className="timestamp-btn"
+                        onClick={() => {
+                          if (videoRef.current) {
+                            videoRef.current.currentTime = m.timestamp_seconds
+                            videoRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                          }
+                        }}
+                      >
+                        ▶ {new Date(m.timestamp_seconds * 1000).toISOString().slice(14, 19)}
+                      </button>
+                    )}
+                    <span className={`severity-badge severity-badge-${m.severity}`}>
+                      {SEVERITY_LABEL[m.severity] ?? m.severity}
+                    </span>
+                  </div>
+                </div>
+                <p className="mistake-issue">{m.issue}</p>
+                {m.detail && <p className="mistake-detail">{m.detail}</p>}
+                <p className="mistake-risk">Injury risk: {m.injury_risk}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+
+      {analysis && (
+        <LiveCoachChat mistakes={analysis.mistakes} liveCoach={liveCoach} />
       )}
     </div>
   )
