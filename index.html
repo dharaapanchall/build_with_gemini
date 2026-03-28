@@ -46,7 +46,7 @@
     z-index: 0;
     pointer-events: none;
     background-size: cover;
-    background-position: center top;
+    background-position: center 60%;
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 1s ease;
@@ -539,7 +539,11 @@
   }
 
   /* ── FEATURES GRID ── */
-  .features-section { background: rgba(255,255,255,0.5); }
+  .features-section {
+    background:
+      radial-gradient(ellipse 60% 60% at 80% 50%, rgba(200,241,53,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(232,124,62,0.05) 0%, transparent 60%);
+  }
   .features-grid {
     display: flex;
     flex-direction: column;
@@ -662,7 +666,7 @@
   }
 
   /* ── INJURY TRACKER ── */
-  .injury-section { background: var(--offblack); }
+  .injury-section { background: rgba(17,17,19,0.45); }
   .injury-layout {
     display: flex;
     flex-direction: column;
@@ -790,7 +794,7 @@
 
   /* ── UPLOAD CTA ── */
   .upload-section {
-    background: var(--offblack);
+    background: rgba(17,17,19,0.45);
     border-top: 1px solid var(--border);
   }
   .upload-box {
