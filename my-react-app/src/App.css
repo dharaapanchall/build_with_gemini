@@ -1,0 +1,270 @@
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  padding: 12px 0 8px;
+}
+
+.header-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.app-header h1 {
+  font-size: 40px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -1px;
+  color: var(--text-h);
+}
+
+.subtitle {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* Cards */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+/* API key */
+.api-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  letter-spacing: 0.3px;
+}
+
+.api-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.api-input:focus {
+  border-color: var(--accent);
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+/* Upload */
+.upload-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 24px;
+}
+
+.upload-btn {
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px dashed var(--border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+
+.upload-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  box-shadow: var(--shadow);
+}
+
+.file-name {
+  font-size: 14px;
+  color: var(--text);
+  word-break: break-all;
+  text-align: center;
+}
+
+.file-size {
+  color: var(--text);
+  opacity: 0.7;
+}
+
+/* Video */
+.video-card {
+  padding: 16px;
+}
+
+.video-player {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+  max-height: 480px;
+  background: #000;
+}
+
+/* Analyze button */
+.analyze-btn {
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+  letter-spacing: 0.3px;
+  align-self: center;
+  min-width: 220px;
+}
+
+.analyze-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spinner-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status messages */
+.status-msg {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.status-info {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.status-error {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-error {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+  }
+}
+
+/* Tips */
+.tips-card {
+  text-align: left;
+}
+
+.tips-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tips-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tip-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 16px 0 6px;
+  padding: 0;
+}
+
+.tip-heading:first-child {
+  margin-top: 0;
+}
+
+.tip-item {
+  margin-left: 20px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  list-style: disc;
+}
+
+.tip-line {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 20px 16px 48px;
+  }
+
+  .app-header h1 {
+    font-size: 28px;
+  }
+
+  .card {
+    padding: 18px 16px;
+  }
+}
