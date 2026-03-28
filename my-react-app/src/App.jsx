@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 import './App.css'
+import { useLiveCoach } from './useLiveCoach'
+import LiveCoachChat from './LiveCoachChat'
 
 // ── MediaPipe pose extraction ────────────────────────────────────────────────
 
@@ -364,6 +366,9 @@ export default function App() {
   const [veoPrompt, setVeoPrompt] = useState('')
 
   const fileInputRef = useRef(null)
+  const videoRef = useRef(null)
+
+  const liveCoach = useLiveCoach(GEMINI_API_KEY)
 
   const onProgress = (track, msg) => {
     if (track === 'upload') setUploadStatus(msg)
@@ -533,11 +538,45 @@ export default function App() {
         </div>
       )}
 
-      {tips && (
+      {analysis && (
         <div className="card tips-card">
-          <h2 className="tips-title">Coaching Analysis</h2>
-          <div className="tips-body">{formatTips(tips)}</div>
+          <h2 className="tips-title">Form Analysis</h2>
+
+          <div className="mistakes-list">
+            {analysis.mistakes.map((m, i) => (
+              <div key={i} className={`mistake-card severity-${m.severity}`}>
+                <div className="mistake-header">
+                  <span className="mistake-body-part">{m.body_part}</span>
+                  <div className="mistake-header-right">
+                    {m.timestamp_seconds != null && (
+                      <button
+                        className="timestamp-btn"
+                        onClick={() => {
+                          if (videoRef.current) {
+                            videoRef.current.currentTime = m.timestamp_seconds
+                            videoRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                          }
+                        }}
+                      >
+                        ▶ {new Date(m.timestamp_seconds * 1000).toISOString().slice(14, 19)}
+                      </button>
+                    )}
+                    <span className={`severity-badge severity-badge-${m.severity}`}>
+                      {SEVERITY_LABEL[m.severity] ?? m.severity}
+                    </span>
+                  </div>
+                </div>
+                <p className="mistake-issue">{m.issue}</p>
+                {m.detail && <p className="mistake-detail">{m.detail}</p>}
+                <p className="mistake-risk">Injury risk: {m.injury_risk}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+
+      {analysis && (
+        <LiveCoachChat mistakes={analysis.mistakes} liveCoach={liveCoach} />
       )}
     </div>
   )
