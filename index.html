@@ -264,9 +264,8 @@
   .hero-right {
     position: relative;
     z-index: 2;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    display: block;
+    min-height: 1px;
   }
   .mockup-frame {
     width: min(480px, 100%);
@@ -540,14 +539,23 @@
   }
 
   /* ── FEATURES GRID ── */
-  .features-section { background: var(--offblack); }
+  .features-section { background: rgba(255,255,255,0.5); }
   .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
     margin-top: 60px;
+    width: min(860px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+    background: transparent;
+    border: none;
+  }
+  .feature-card {
+    width: 100%;
     border: 1px solid var(--border);
+    background: var(--surface);
   }
   .feature-card {
     background: var(--surface);
@@ -616,13 +624,19 @@
 
   /* ── ANALYSIS SECTION ── */
   .analysis-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 60px;
+    text-align: center;
+  }
+  .analysis-section > div {
+    width: min(760px, 100%);
   }
   .analysis-visual {
     position: relative;
+    display: flex;
+    justify-content: center;
   }
   .radar-wrap {
     background: var(--surface);
@@ -650,11 +664,14 @@
   /* ── INJURY TRACKER ── */
   .injury-section { background: var(--offblack); }
   .injury-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
     margin-top: 60px;
+  }
+  .injury-layout > * {
+    width: min(760px, 100%);
   }
   .body-map-wrap {
     background: var(--surface);
@@ -835,18 +852,25 @@
   }
 
   /* ── TTS PANEL ── */
+  .tts-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
   .tts-bar {
     background: var(--surface2);
     border: 1px solid var(--border2);
     border-radius: 10px;
     padding: 20px 28px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 20px;
     margin-top: 20px;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    width: min(100%, 600px);
   }
   .tts-play {
     width: 44px; height: 44px;
@@ -931,9 +955,9 @@
     .hero-right { display: none; }
     section { padding: 70px 24px; }
     nav { padding: 16px 24px; }
-    .features-grid { grid-template-columns: 1fr; }
-    .analysis-section { grid-template-columns: 1fr; }
-    .injury-layout { grid-template-columns: 1fr; }
+    .features-grid { width: 100%; gap: 12px; }
+    .analysis-section { gap: 40px; }
+    .injury-layout { gap: 30px; }
     .tech-grid { grid-template-columns: 1fr 1fr; }
     footer { flex-direction: column; gap: 16px; text-align: center; }
   }
@@ -981,25 +1005,11 @@
       and movement in real-time — with Veo-generated multi-angle views and
       voice coaching synced frame-by-frame.
     </p>
-    <div class="hero-actions">
-      <a href="#upload" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Analyze My Game
-      </a>
-      <a href="#analyze" class="btn-secondary">
-        See how it works
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
 
     <div class="hero-stats">
       <div class="stat-item">
         <div class="stat-num">340+</div>
         <div class="stat-label">Data points / frame</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">12</div>
-        <div class="stat-label">Camera angles</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">0.03s</div>
@@ -1008,80 +1018,7 @@
     </div>
   </div>
 
-  <!-- HERO MOCKUP -->
-  <div class="hero-right">
-    <div class="mockup-frame">
-      <div class="mockup-topbar">
-        <div class="mockup-dots">
-          <div class="mockup-dot"></div>
-          <div class="mockup-dot"></div>
-          <div class="mockup-dot"></div>
-        </div>
-        <span class="mockup-label">MATCH · ANALYSIS · LIVE</span>
-      </div>
-
-      <div class="video-viewport">
-        <div class="court-3d">
-          <div class="court-floor"></div>
-          <div class="net-line"></div>
-        </div>
-        <div class="tracking-overlay">
-          <div class="track-point"></div>
-          <div class="track-point"></div>
-          <div class="track-point"></div>
-          <div class="ball-trail">
-            <div class="trail-dot"></div>
-            <div class="trail-dot"></div>
-            <div class="trail-dot"></div>
-            <div class="trail-dot"></div>
-          </div>
-        </div>
-        <div class="hud-corner">
-          <div class="hud-chip">● REC</div>
-          <div class="hud-chip red">● LIVE AI</div>
-        </div>
-      </div>
-
-      <div class="mockup-panels">
-        <div class="panel">
-          <div class="panel-title">Shot Power</div>
-          <div class="panel-metric">127<span class="unit">km/h</span></div>
-          <div class="panel-sub"><span class="up">↑ 12%</span> vs avg</div>
-          <div class="mini-bar">
-            <div class="bar-track"><div class="bar-fill" style="--w:82%"></div></div>
-            <span class="bar-pct">82%</span>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">Accuracy</div>
-          <div class="panel-metric">74<span class="unit">%</span></div>
-          <div class="panel-sub"><span class="down">↓ 3%</span> this set</div>
-          <div class="mini-bar">
-            <div class="bar-track"><div class="bar-fill" style="--w:74%; background:var(--clay)"></div></div>
-            <span class="bar-pct">74%</span>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">Form Score</div>
-          <div class="panel-metric">8.2<span class="unit">/10</span></div>
-          <div class="panel-sub"><span class="up">↑ Good</span> stance</div>
-          <div class="mini-bar">
-            <div class="bar-track"><div class="bar-fill" style="--w:82%; background:var(--teal)"></div></div>
-            <span class="bar-pct">82%</span>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">Injury Risk</div>
-          <div class="panel-metric" style="color:var(--clay)">MED</div>
-          <div class="panel-sub"><span style="color:var(--clay)">Wrist</span> stress detected</div>
-          <div class="mini-bar">
-            <div class="bar-track"><div class="bar-fill" style="--w:55%; background:var(--clay)"></div></div>
-            <span class="bar-pct">55%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="hero-right"></div>
 </section>
 
 <!-- FEATURES -->
@@ -1092,7 +1029,7 @@
 
   <div class="features-grid">
     <div class="feature-card">
-      <div class="feature-icon lime">🎾</div>
+      <div class="feature-icon lime"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="2"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="12" y1="12" x2="9" y2="18"/><line x1="12" y1="12" x2="15" y2="18"/></svg></div>
       <div class="feature-name">Form Analysis</div>
       <div class="feature-desc">Posture, grip, swing path, and foot positioning evaluated against pro benchmarks. Real-time overlay shows correction zones.</div>
       <div class="feature-tags">
@@ -1102,7 +1039,7 @@
       </div>
     </div>
     <div class="feature-card clay">
-      <div class="feature-icon clay">📐</div>
+      <div class="feature-icon clay"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M9 12h6M9 15h6M9 9h6"/></svg></div>
       <div class="feature-name">Shot Mechanics</div>
       <div class="feature-desc">Power, direction, spin, and contact point analysis. See exactly where on the racket you struck — and where you should have.</div>
       <div class="feature-tags">
@@ -1112,7 +1049,7 @@
       </div>
     </div>
     <div class="feature-card teal-card">
-      <div class="feature-icon teal">📸</div>
+      <div class="feature-icon teal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
       <div class="feature-name">Multi-Angle Views</div>
       <div class="feature-desc">Veo and Nano generate alternate camera perspectives from your single clip — birds-eye, side-court, and slow-motion replay.</div>
       <div class="feature-tags">
@@ -1122,7 +1059,7 @@
       </div>
     </div>
     <div class="feature-card red-card">
-      <div class="feature-icon red">🩺</div>
+      <div class="feature-icon red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
       <div class="feature-name">Injury Risk Report</div>
       <div class="feature-desc">Biomechanical stress detection on wrists, shoulders, knees, and ankles. Catch overuse patterns before they become injuries.</div>
       <div class="feature-tags">
@@ -1132,7 +1069,7 @@
       </div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon purple">🔊</div>
+      <div class="feature-icon purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
       <div class="feature-name">TTS Voice Coaching</div>
       <div class="feature-desc">Google TTS delivers frame-synced audio coaching. Hear feedback at exactly the moment it matters — no reading required.</div>
       <div class="feature-tags">
@@ -1142,7 +1079,7 @@
       </div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon orange">🎯</div>
+      <div class="feature-icon orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
       <div class="feature-name">Shot Alternatives</div>
       <div class="feature-desc">AI suggests the optimal shot you could have played — cross-court winner, drop shot, lob — visualized with trajectory overlays.</div>
       <div class="feature-tags">
@@ -1150,6 +1087,29 @@
         <span class="tag">Trajectory Viz</span>
         <span class="tag">Strategy</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD CTA -->
+<section class="upload-section" id="upload">
+  <div class="section-label">Get Started</div>
+  <h2 class="section-title">ANALYZE YOUR<br>NEXT MATCH</h2>
+
+  <div class="upload-box">
+    <div class="upload-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+    <div class="upload-title">DROP YOUR CLIP HERE</div>
+    <div class="upload-sub">Front-facing camera footage works best · Max 5 min · Outdoor or indoor</div>
+    <a href="#" class="btn-primary" style="display: inline-flex; margin: 0 auto;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Choose Video File
+    </a>
+    <div class="formats">
+      <span class="format-tag">MP4</span>
+      <span class="format-tag">MOV</span>
+      <span class="format-tag">WEBM</span>
+      <span class="format-tag">AVI</span>
+      <span class="format-tag">MKV</span>
     </div>
   </div>
 </section>
@@ -1271,7 +1231,7 @@
 </section>
 
 <!-- TTS COACHING BAR -->
-<section style="padding: 60px 48px; background: var(--black);">
+<section class="tts-section" style="padding: 60px 48px; background: var(--black);">
   <div style="text-align: center; margin-bottom: 16px;">
     <div class="section-label" style="justify-content: center;">Voice Coaching</div>
     <h3 style="font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin-bottom: 8px;">Frame-synced audio feedback</h3>
@@ -1328,29 +1288,6 @@
       <span class="tech-logo">◎</span>
       <div class="tech-name">Google TTS</div>
       <div class="tech-desc">Natural-sounding voice coaching synchronized to video playback timestamps.</div>
-    </div>
-  </div>
-</section>
-
-<!-- UPLOAD CTA -->
-<section class="upload-section" id="upload">
-  <div class="section-label">Get Started</div>
-  <h2 class="section-title">ANALYZE YOUR<br>NEXT MATCH</h2>
-
-  <div class="upload-box">
-    <div class="upload-icon">📹</div>
-    <div class="upload-title">DROP YOUR CLIP HERE</div>
-    <div class="upload-sub">Front-facing camera footage works best · Max 5 min · Outdoor or indoor</div>
-    <a href="#" class="btn-primary" style="display: inline-flex; margin: 0 auto;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Choose Video File
-    </a>
-    <div class="formats">
-      <span class="format-tag">MP4</span>
-      <span class="format-tag">MOV</span>
-      <span class="format-tag">WEBM</span>
-      <span class="format-tag">AVI</span>
-      <span class="format-tag">MKV</span>
     </div>
   </div>
 </section>
@@ -1557,17 +1494,16 @@
       preT = Math.min(preT + PRE_SPEED, 1);
       bx = bezier2(sx, apexX, bncX, preT);
       by = bezier2(sy, apexY, bncY, preT);
-      bRot += 0.07;
-      if (preT >= 1) { currentPhase = 'post'; bx = bncX; by = bncY; }
+      if (preT >= 1) { currentPhase = 'post'; bx = bncX; by = bncY; bRot += (30 + Math.random() * 40) * Math.PI / 180; }
 
     } else if (currentPhase === 'post') {
       postT = Math.min(postT + POST_SPEED, 1);
       bx = bezier2(bncX, postApexX, ex, postT);
       by = bezier2(bncY, postApexY, ey, postT);
-      bRot += 0.055;
       if (postT >= 1) {
         bx = ex; by = ey;
         currentPhase = 'pause';
+        bRot += (30 + Math.random() * 40) * Math.PI / 180;
         setTimeout(() => startShot(!goingUp), 80 + Math.random() * 140);
       }
     }
