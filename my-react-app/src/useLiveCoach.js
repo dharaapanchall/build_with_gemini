@@ -27,6 +27,7 @@ function float32ToBase64Pcm16(float32) {
 
 export function useLiveCoach(apiKey) {
   const [messages, setMessages] = useState([])
+  console.log('HOOK messages state:', messages)
   const [isResponding, setIsResponding] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [isReady, setIsReady] = useState(false)
@@ -38,7 +39,7 @@ export function useLiveCoach(apiKey) {
   const inputCtxRef = useRef(null)
   const processorRef = useRef(null)
   const streamRef = useRef(null)
-  const pendingCoachTranscriptRef = useRef('')
+  const pendingTranscriptRef = useRef('')
   const pendingUserTranscriptRef = useRef('')
 
   function scheduleAudioChunk(float32Data) {
@@ -73,13 +74,6 @@ export function useLiveCoach(apiKey) {
           responseModalities: [Modality.AUDIO],
           inputAudioTranscription: {},
           outputAudioTranscription: {},
-          realtimeInputConfig: {
-            automaticActivityDetection: {
-              disabled: false,
-              prefixPaddingMs: 300,
-              silenceDurationMs: 1200,
-            },
-          },
           systemInstruction: {
             parts: [{
               text: `You are an expert tennis coach and sports injury prevention specialist having a real-time voice conversation with a player.
@@ -90,7 +84,7 @@ Answer conversationally. Be encouraging, specific, and concise.
 When they ask about a mistake, explain the injury risk, what it should feel like to correct it, and give one concrete drill.
 Keep each response under 30 seconds of speech.`
             }]
-          },
+          }
         },
         callbacks: {
           onopen() {
@@ -98,13 +92,14 @@ Keep each response under 30 seconds of speech.`
           },
           onmessage(msg) {
             const parts = msg.serverContent?.modelTurn?.parts ?? []
+            let hasAudio = false
 
             for (const part of parts) {
               if (part.inlineData?.data) {
+                hasAudio = true
                 try {
                   const float32 = base64ToPcmFloat32(part.inlineData.data)
                   scheduleAudioChunk(float32)
-                  setIsResponding(true)
                 } catch (e) {
                   console.error('Audio decode error:', e)
                 }
@@ -114,27 +109,30 @@ Keep each response under 30 seconds of speech.`
             const inputChunk = msg.serverContent?.inputTranscription?.text
             if (inputChunk) {
               pendingUserTranscriptRef.current += inputChunk
+              console.log('INPUT CHUNK:', inputChunk)
             }
 
             const outputChunk = msg.serverContent?.outputTranscription?.text
             if (outputChunk) {
-              pendingCoachTranscriptRef.current += outputChunk
+              pendingTranscriptRef.current += outputChunk
+              console.log('OUTPUT CHUNK:', outputChunk)
             }
+
+            if (hasAudio) setIsResponding(true)
 
             if (msg.serverContent?.turnComplete) {
               setIsResponding(false)
               const userText = pendingUserTranscriptRef.current.trim()
-              const coachText = pendingCoachTranscriptRef.current.trim()
-
+              const coachText = pendingTranscriptRef.current.trim()
+              console.log('TURN COMPLETE userText:', userText, 'coachText:', coachText)
               setMessages((prev) => {
                 const next = [...prev]
                 if (userText) next.push({ role: 'user', text: userText })
                 if (coachText) next.push({ role: 'coach', text: coachText })
                 return next
               })
-
               pendingUserTranscriptRef.current = ''
-              pendingCoachTranscriptRef.current = ''
+              pendingTranscriptRef.current = ''
             }
           },
           onerror(e) {
@@ -215,6 +213,7 @@ Keep each response under 30 seconds of speech.`
   }, [])
 
   const reset = useCallback(() => {
+    console.log('RESET CALLED')
     stopRecording()
     if (sessionRef.current) {
       sessionRef.current.close?.()
@@ -225,7 +224,7 @@ Keep each response under 30 seconds of speech.`
       outputCtxRef.current = null
     }
     nextPlayTimeRef.current = 0
-    pendingCoachTranscriptRef.current = ''
+    pendingTranscriptRef.current = ''
     pendingUserTranscriptRef.current = ''
     setMessages([])
     setIsReady(false)

@@ -43,7 +43,7 @@ export default function LiveCoachChat({ mistakes, liveCoach }) {
 
       {messages.length === 0 && isReady && (
         <p className="chat-hint">
-          Ask about your form mistakes — type a message or click the mic to talk.
+          Ask about your form mistakes — type or hold the mic button to speak.
         </p>
       )}
 
@@ -84,9 +84,12 @@ export default function LiveCoachChat({ mistakes, liveCoach }) {
         </button>
         <button
           className={`chat-mic-btn ${isRecording ? 'chat-mic-active' : ''}`}
-          onClick={isRecording ? stopRecording : startRecording}
+          onMouseDown={startRecording}
+          onMouseUp={stopRecording}
+          onTouchStart={startRecording}
+          onTouchEnd={stopRecording}
           disabled={!isReady}
-          title={isRecording ? 'Stop conversation' : 'Start conversation'}
+          title="Hold to speak"
         >
           {isRecording ? '🔴' : '🎤'}
         </button>
